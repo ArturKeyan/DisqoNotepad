@@ -20,4 +20,8 @@ export class AddNotepadComponent implements OnInit {
   onSubmit() {
     console.warn(this.notepadForm.value);
   }
+
+  onDelete() {
+    console.log('delete');
+  }
 }

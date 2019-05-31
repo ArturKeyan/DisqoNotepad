@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+@blue: #39ACDC;
+@red: #FF0000;
+@green: #57b93E;
+@text-color: #333;
+@placeholder-color: #AAA;
+@border-color: #CCC;
+@main-background: #e0e0d1;
+@block-background: #fff;
+
+body {
+    font-family: Arial;
+    color: @text-color;
+    background-color: @main-background;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.button
+{
+    color: #fff;
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 3px;
+    margin: 5px 5px 5px 0px;
+}
+
+input, textarea
+{
+    padding: 5px;
+    width: 200px;
+    border: #CCC 1px solid;
+    color: #333;
+    margin: 5px 0;
+}
+
+.red
+{
+    background: @red;
+}
+
+.green
+{
+    background: @green;
+}
+
+.blue
+{
+    background: @blue;
+}
+
+.input-lable
+{
+    font-size: 12px;
+}
+
+.main-container
+{
+    width: 1024px;
+    min-width: 320px;
+    margin: auto;
+    padding: 20px;
+
+    .notepad-block
+    {
+        border: @border-color 1px solid;
+        background-color: @block-background;
+        border-radius: 5px;
+        padding: 10px;
+    }
+}
+

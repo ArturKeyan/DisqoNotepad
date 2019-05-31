@@ -1,14 +1,14 @@
-<p>
-  add-notepad works!
-</p>
+<div class="notepad-block">
+  <form novalidate [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
+    <label class="input-lable">Notepad Tite</label>
+    <div class="form-group form-group-default required">
+      <input type="text" class="form-control" formControlName="title">
+    </div>
+    
+    <button class="button blue" type="submit" [disabled]="!notepadForm.valid">Save</button>
+    <button class="button red" (ngClick)="onDelete()">Delete</button>
+  </form>
 
-<form novalidate [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
-  <div class="form-group form-group-default required">
-    <input type="text" class="form-control" formControlName="title">
-  </div>
-  
-  <button type="submit" [disabled]="!notepadForm.valid">Add</button>
-</form>
-
-<app-add-note></app-add-note>
+  <app-note></app-note>
+</div>
 
