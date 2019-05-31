@@ -18,6 +18,7 @@ export class NotepadComponent implements OnInit, OnDestroy {
     title: '',
   };
 
+  public isTitleUnique = true;
   private notepadForm: FormGroup;
 
   private subscription;
@@ -30,7 +31,6 @@ export class NotepadComponent implements OnInit, OnDestroy {
     this.subscription = loadJson.subscribe((res) => {
         const notes: Note[] = [];
         this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepad as Notepad;
-        console.warn(this.notepad);
         this.notepadForm = this.fb.group({
           title: new FormControl(this.notepad.title, Validators.required)
         });
@@ -44,12 +44,16 @@ export class NotepadComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.notepad.title = this.notepadForm.get('title').value;
     this.notepadHttpService.save(this.notepad).subscribe(res => {
-      console.warn(res);
     });
   }
 
   public addNote(note: Note): void {
-    this.notepad.notes.push(note);
+    const sameNameNotes = this.notepad.notes.filter((n) => note.title === n.title);
+    if (sameNameNotes.length > 0) {
+      console.error('note title must be unique');
+    } else if (sameNameNotes.length === 0) {
+      this.notepad.notes.push(note);
+    }
   }
 
   public deleteNote(note: Note): void {
@@ -57,11 +61,18 @@ export class NotepadComponent implements OnInit, OnDestroy {
   }
 
   public updateNote({note, title}: {note: Note, title: string}): void {
-    this.notepad.notes.forEach((n, i) => {
-      if (title === n.title) {
-        this.notepad.notes[i].title = note.title;
-        this.notepad.notes[i].note = note.note;
-      }
-    });
+    const sameNameNotes = this.notepad.notes.filter((n) => note.title === n.title);
+    if (sameNameNotes.length > 0) {
+      this.isTitleUnique = false;
+      console.error('note title must be unique');
+    } else if (sameNameNotes.length === 0) {
+      this.isTitleUnique = true;
+      this.notepad.notes.forEach((n, i) => {
+        if (title === n.title) {
+          this.notepad.notes[i].title = note.title;
+          this.notepad.notes[i].note = note.note;
+        }
+      });
+    }
   }
 }

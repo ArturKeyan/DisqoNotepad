@@ -7,9 +7,6 @@ export class BaseHttpService {
         .set('Accept', contentType || 'application/json')
         .set('Content-Type', contentType || 'application/json')
         .set('Authorization', `token ${environment.token}`);
-
-        console.log(headers);
-
         return headers;
     }
 }

@@ -254,7 +254,7 @@ var AddNoteComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<form novalidate [formGroup]=\"noteForm\" (ngSubmit)=\"onSubmit()\">\n  <div class=\"form-group form-group-default required\">\n    <input type=\"text\" class=\"form-control\" formControlName=\"title\">\n  </div>\n\n  <div class=\"form-group form-group-default required\">\n    <textarea formControlName=\"note\"></textarea>\n  </div>\n  \n  <button class=\"button red\">Delete</button>\n</form>\n"
+module.exports = "<form novalidate [formGroup]=\"noteForm\" (ngSubmit)=\"onSubmit()\">\n  <div class=\"form-group form-group-default required\">\n    <input type=\"text\" class=\"form-control\" formControlName=\"title\">\n  </div>\n\n  <div class=\"form-group form-group-default required\">\n    <textarea formControlName=\"note\"></textarea>\n  </div>\n  \n  <button class=\"button red\" (click)=\"onDelete()\" *ngIf=\"showDeleteButton\">Delete</button>\n</form>\n"
 
 /***/ }),
 
@@ -288,21 +288,45 @@ __webpack_require__.r(__webpack_exports__);
 var EditNoteComponent = /** @class */ (function () {
     function EditNoteComponent(fb) {
         this.fb = fb;
+        this.deleteNote = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+        this.updateNote = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
     }
     EditNoteComponent.prototype.ngOnInit = function () {
-        console.warn(this.note);
         this.noteForm = this.fb.group({
-            title: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](this.note.title, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required),
-            note: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](this.note.note, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required)
+            title: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](this.note.title, { validators: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, updateOn: 'blur' }),
+            note: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](this.note.note, { validators: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, updateOn: 'blur' })
+        });
+        this.onChanges();
+    };
+    EditNoteComponent.prototype.onDelete = function () {
+        this.deleteNote.emit(this.note);
+    };
+    EditNoteComponent.prototype.onChanges = function () {
+        var _this = this;
+        this.noteForm.valueChanges.subscribe(function (val) {
+            var note = {
+                title: val.title,
+                note: val.note,
+            };
+            _this.updateNote.emit({ note: note, title: _this.note.title });
         });
     };
-    EditNoteComponent.prototype.onSubmit = function () {
-        console.warn(this.noteForm.value);
-    };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], EditNoteComponent.prototype, "deleteNote", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], EditNoteComponent.prototype, "updateNote", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
     ], EditNoteComponent.prototype, "note", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Boolean)
+    ], EditNoteComponent.prototype, "showDeleteButton", void 0);
     EditNoteComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-edit-note',
@@ -325,7 +349,7 @@ var EditNoteComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"notepad-block\">\n  <form novalidate [formGroup]=\"notepadForm\" (ngSubmit)=\"onSubmit()\">\n    <label class=\"input-lable\">Notepad Tite</label>\n    <div class=\"form-group form-group-default required\">\n      <input type=\"text\" class=\"form-control\" formControlName=\"title\">\n    </div>\n\n    <button class=\"button blue\" type=\"submit\" [disabled]=\"!notepadForm.valid\">Save</button>\n    <button class=\"button red\" (ngClick)=\"onDelete()\">Delete</button>\n  </form>\n\n  <app-add-note (addNote)=\"addNote($event)\"></app-add-note>\n\n  <ng-container *ngIf=\"notepad\">\n    <app-edit-note *ngFor=\"let note of notepad.notes\" [note]=\"note\"> </app-edit-note>\n  </ng-container>\n</div>"
+module.exports = "<div class=\"notepad-block\">\n  <form *ngIf=\"notepadForm\" [formGroup]=\"notepadForm\" (ngSubmit)=\"onSubmit()\">\n    <label class=\"input-lable\">Notepad Tite</label>\n    <div class=\"form-group form-group-default required\">\n      <input type=\"text\" class=\"form-control\" formControlName=\"title\">\n    </div>\n\n    <button class=\"button blue\" type=\"submit\" [disabled]=\"!notepadForm.valid || !isTitleUnique || notepad.notes.length > 0\">Save</button>\n  </form>\n\n  <app-add-note (addNote)=\"addNote($event)\"></app-add-note>\n\n  <ng-container *ngIf=\"notepad\">\n    <app-edit-note\n      (deleteNote)=\"deleteNote($event)\" \n      (updateNote)=\"updateNote($event)\" \n      *ngFor=\"let note of notepad.notes\"\n      [note]=\"note\" \n      [showDeleteButton]=\"notepad.notes.length > 1\"\n    > </app-edit-note>\n  </ng-container>\n</div>"
 
 /***/ }),
 
@@ -367,32 +391,56 @@ var NotepadComponent = /** @class */ (function () {
             notes: [],
             title: '',
         };
+        this.isTitleUnique = true;
     }
     NotepadComponent.prototype.ngOnInit = function () {
         var _this = this;
         var loadJson = this.notepadHttpService.getJson();
-        this.notepadForm = this.fb.group({
-            title: new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"](null, _angular_forms__WEBPACK_IMPORTED_MODULE_3__["Validators"].required)
-        });
         this.subscription = loadJson.subscribe(function (res) {
             var notes = [];
-            _this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepads[0];
-            console.warn(_this.notepad);
+            _this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepad;
+            _this.notepadForm = _this.fb.group({
+                title: new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"](_this.notepad.title, _angular_forms__WEBPACK_IMPORTED_MODULE_3__["Validators"].required)
+            });
         });
     };
     NotepadComponent.prototype.ngOnDestroy = function () {
         this.subscription.unsubscribe();
     };
     NotepadComponent.prototype.onSubmit = function () {
+        this.notepad.title = this.notepadForm.get('title').value;
         this.notepadHttpService.save(this.notepad).subscribe(function (res) {
-            console.warn(res);
         });
     };
     NotepadComponent.prototype.addNote = function (note) {
-        this.notepad.notes.push(note);
+        var sameNameNotes = this.notepad.notes.filter(function (n) { return note.title === n.title; });
+        if (sameNameNotes.length > 0) {
+            console.error('note title must be unique');
+        }
+        else if (sameNameNotes.length === 0) {
+            this.notepad.notes.push(note);
+        }
     };
-    NotepadComponent.prototype.onDelete = function () {
-        console.log('delete');
+    NotepadComponent.prototype.deleteNote = function (note) {
+        this.notepad.notes = this.notepad.notes.filter(function (n) { return n.title !== note.title; });
+    };
+    NotepadComponent.prototype.updateNote = function (_a) {
+        var _this = this;
+        var note = _a.note, title = _a.title;
+        var sameNameNotes = this.notepad.notes.filter(function (n) { return note.title === n.title; });
+        if (sameNameNotes.length > 0) {
+            this.isTitleUnique = false;
+            console.error('note title must be unique');
+        }
+        else if (sameNameNotes.length === 0) {
+            this.isTitleUnique = true;
+            this.notepad.notes.forEach(function (n, i) {
+                if (title === n.title) {
+                    _this.notepad.notes[i].title = note.title;
+                    _this.notepad.notes[i].note = note.note;
+                }
+            });
+        }
     };
     NotepadComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -464,6 +512,8 @@ var NotepadModule = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BaseHttpService", function() { return BaseHttpService; });
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+
 
 var BaseHttpService = /** @class */ (function () {
     function BaseHttpService() {
@@ -472,10 +522,7 @@ var BaseHttpService = /** @class */ (function () {
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]()
             .set('Accept', contentType || 'application/json')
             .set('Content-Type', contentType || 'application/json')
-            .set('X-OAuth-Scopes', 'gist')
-            .set('X-Accepted-OAuth-Scopes', 'gist')
-            .set('Authorization', 'token 6fb28c8cdc01fb33677bf55aefce476b712eca6c');
-        console.log(headers);
+            .set('Authorization', "token " + src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].token);
         return headers;
     };
     return BaseHttpService;
@@ -513,7 +560,7 @@ var NotepadHttpService = /** @class */ (function (_super) {
         return _this;
     }
     NotepadHttpService.prototype.getJson = function () {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].notepadUrl);
+        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].notepadUrl + "?v=" + Math.floor(Date.now() / 1000));
     };
     NotepadHttpService.prototype.save = function (notepad) {
         var gist = {
@@ -521,7 +568,7 @@ var NotepadHttpService = /** @class */ (function (_super) {
             files: {
                 'notepads.json': {
                     filename: 'notepads.json',
-                    content: JSON.stringify(notepad)
+                    content: JSON.stringify({ notepad: notepad })
                 }
             },
         };
@@ -550,7 +597,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
 var environment = {
     production: false,
-    notepadUrl: 'https://api.github.com/gists/65e2020398b65dab55f5f73c344db223'
+    notepadUrl: 'https://api.github.com/gists/65e2020398b65dab55f5f73c344db223',
+    token: '4f446ecdcc1dd29450c513f40be273f10beefe52'
 };
 
 

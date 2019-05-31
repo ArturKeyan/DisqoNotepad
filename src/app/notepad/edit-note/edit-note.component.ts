@@ -14,22 +14,17 @@ export class EditNoteComponent implements OnInit {
   @Output() deleteNote = new EventEmitter<Note>();
   @Output() updateNote = new EventEmitter<{ note: Note, title: string }>();
   @Input() note: Note;
+  @Input() showDeleteButton: boolean;
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
-    console.warn(this.note);
-
     this.noteForm = this.fb.group({
       title: new FormControl(this.note.title, {validators: Validators.required, updateOn: 'blur'}),
       note: new FormControl(this.note.note, {validators: Validators.required, updateOn: 'blur'})
     });
 
     this.onChanges();
-  }
-
-  onSubmit() {
-    console.warn(this.noteForm.value);
   }
 
   onDelete() {

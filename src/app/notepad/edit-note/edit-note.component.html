@@ -7,5 +7,5 @@
     <textarea formControlName="note"></textarea>
   </div>
   
-  <button class="button red" (click)="onDelete()">Delete</button>
+  <button class="button red" (click)="onDelete()" *ngIf="showDeleteButton">Delete</button>
 </form>
