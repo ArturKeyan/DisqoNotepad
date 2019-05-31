@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +16,8 @@ import { NotepadModule } from './notepad/notepad.module';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    NotepadModule
+    NotepadModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

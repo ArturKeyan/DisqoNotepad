@@ -1,3 +1,17 @@
-<p>
-  <app-add-notepad></app-add-notepad>
-</p>
+<div class="notepad-block">
+  <form novalidate [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
+    <label class="input-lable">Notepad Tite</label>
+    <div class="form-group form-group-default required">
+      <input type="text" class="form-control" formControlName="title">
+    </div>
+
+    <button class="button blue" type="submit" [disabled]="!notepadForm.valid">Save</button>
+    <button class="button red" (ngClick)="onDelete()">Delete</button>
+  </form>
+
+  <app-add-note></app-add-note>
+
+  <ng-container *ngIf="notepad">
+    <app-edit-note *ngFor="let note of notepad.notes" [note]="note"> </app-edit-note>
+  </ng-container>
+</div>

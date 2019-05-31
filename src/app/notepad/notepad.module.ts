@@ -2,12 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NotepadComponent } from './notepad.component';
-import { NoteComponent } from './note/note.component';
-import { AddNoteComponent } from './note/add-note/add-note.component';
-import { AddNotepadComponent } from './add-notepad/add-notepad.component';
+import { AddNoteComponent } from './add-note/add-note.component';
+import { EditNoteComponent } from './edit-note/edit-note.component';
 
 @NgModule({
-  declarations: [NotepadComponent, NoteComponent, AddNoteComponent, AddNotepadComponent],
+  declarations: [NotepadComponent, AddNoteComponent, EditNoteComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule
