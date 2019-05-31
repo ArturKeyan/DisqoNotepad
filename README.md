@@ -23,6 +23,7 @@
 
 # Environment
     Stores local env based data` URLs and TOKENs
+    *IMPORTANT* set your git token (with gist create permision) on enviroment.ts
 
 # LIVE
     live example - https://arturkeyan.github.io/DisqoNotepad/
