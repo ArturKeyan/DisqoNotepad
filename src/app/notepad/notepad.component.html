@@ -1,22 +1,21 @@
 <div class="notepad-block">
-  <form *ngIf="notepadForm" [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
-    <label class="input-lable">Notepad Tite</label>
-    <div class="form-group form-group-default required">
-      <input type="text" class="form-control" formControlName="title">
-    </div>
+  <ng-container *ngIf="notepadForm">
+    <form [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
+      <label class="input-lable">Notepad Tite</label>
+      <div class="form-group form-group-default required">
+        <input type="text" class="form-control" formControlName="title">
+      </div>
 
-    <button class="button blue" type="submit" [disabled]="!notepadForm.valid || !isTitleUnique || notepad.notes.length > 0">Save</button>
-  </form>
+      <button class="button blue" type="submit"
+        [disabled]="!notepadForm.valid || !isTitleUnique || notepad.notes.length > 0">Save</button>
+    </form>
 
-  <app-add-note (addNote)="addNote($event)"></app-add-note>
+    <app-add-note (addNote)="addNote($event)"></app-add-note>
 
-  <ng-container *ngIf="notepad">
-    <app-edit-note
-      (deleteNote)="deleteNote($event)" 
-      (updateNote)="updateNote($event)" 
-      *ngFor="let note of notepad.notes"
-      [note]="note" 
-      [showDeleteButton]="notepad.notes.length > 1"
-    > </app-edit-note>
+    <ng-container *ngIf="notepad">
+      <app-edit-note (deleteNote)="deleteNote($event)" (updateNote)="updateNote($event)"
+        *ngFor="let note of notepad.notes" [note]="note" [showDeleteButton]="notepad.notes.length > 1"> </app-edit-note>
+    </ng-container>
   </ng-container>
+  <ng-container *ngIf="!notepadForm">Loading...</ng-container>
 </div>
