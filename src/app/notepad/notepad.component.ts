@@ -55,4 +55,13 @@ export class NotepadComponent implements OnInit, OnDestroy {
   public deleteNote(note: Note): void {
     this.notepad.notes = this.notepad.notes.filter(n => n.title !== note.title);
   }
+
+  public updateNote({note, title}: {note: Note, title: string}): void {
+    this.notepad.notes.forEach((n, i) => {
+      if (title === n.title) {
+        this.notepad.notes[i].title = note.title;
+        this.notepad.notes[i].note = note.note;
+      }
+    });
+  }
 }
