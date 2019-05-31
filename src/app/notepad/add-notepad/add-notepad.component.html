@@ -1,0 +1,14 @@
+<p>
+  add-notepad works!
+</p>
+
+<form novalidate [formGroup]="notepadForm" (ngSubmit)="onSubmit()">
+  <div class="form-group form-group-default required">
+    <input type="text" class="form-control" formControlName="title">
+  </div>
+  
+  <button type="submit" [disabled]="!notepadForm.valid">Add</button>
+</form>
+
+<app-add-note></app-add-note>
+

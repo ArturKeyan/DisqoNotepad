@@ -1,0 +1,15 @@
+<p>
+  add-notes
+</p>
+
+<form novalidate [formGroup]="noteForm" (ngSubmit)="onSubmit()">
+  <div class="form-group form-group-default required">
+    <input type="text" class="form-control" formControlName="title">
+  </div>
+
+  <div class="form-group form-group-default required">
+    <textarea formControlName="note"></textarea>
+  </div>
+  
+  <button type="submit" [disabled]="!noteForm.valid">Add</button>
+</form>
