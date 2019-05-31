@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { Note } from 'src/app/models/note.model';
 
 @Component({
   selector: 'app-add-note',
@@ -7,6 +8,7 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
   styleUrls: ['./add-note.component.less']
 })
 export class AddNoteComponent implements OnInit {
+  @Output() addNote = new EventEmitter<Note>();
   private noteForm: FormGroup;
 
   constructor(private fb: FormBuilder) { }
@@ -19,6 +21,14 @@ export class AddNoteComponent implements OnInit {
   }
 
   onSubmit() {
-    console.warn(this.noteForm.value);
+    const note: Note = {
+        id: null,
+        note: this.noteForm.get('note').value,
+        title: this.noteForm.get('title').value
+    };
+
+    this.addNote.emit(note);
+
+    this.noteForm.reset();
   }
 }

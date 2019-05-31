@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 import { NotepadHttpService } from '../services/http/notepad-http.service';
 import { Notepad } from '../models/notepad.model';
@@ -12,7 +12,11 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
   providers: [ NotepadHttpService ]
 })
 export class NotepadComponent implements OnInit, OnDestroy {
-  public notepad: Notepad;
+  public notepad: Notepad = {
+    id: null,
+    notes: [],
+    title: '',
+  };
 
   private notepadForm: FormGroup;
 
@@ -29,7 +33,7 @@ export class NotepadComponent implements OnInit, OnDestroy {
 
     this.subscription = loadJson.subscribe((res) => {
         const notes: Note[] = [];
-        this.notepad = (JSON.parse(res.files["notepads.json"].content)).notepads[0] as Notepad;
+        this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepads[0] as Notepad;
         console.warn(this.notepad);
     });
   }
@@ -39,7 +43,13 @@ export class NotepadComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.warn(this.notepadForm.value);
+    this.notepadHttpService.save(this.notepad).subscribe(res => {
+      console.warn(res);
+    });
+  }
+
+  public addNote(note: Note): void {
+    this.notepad.notes.push(note);
   }
 
   onDelete() {

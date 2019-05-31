@@ -9,7 +9,7 @@
     <button class="button red" (ngClick)="onDelete()">Delete</button>
   </form>
 
-  <app-add-note></app-add-note>
+  <app-add-note (addNote)="addNote($event)"></app-add-note>
 
   <ng-container *ngIf="notepad">
     <app-edit-note *ngFor="let note of notepad.notes" [note]="note"> </app-edit-note>

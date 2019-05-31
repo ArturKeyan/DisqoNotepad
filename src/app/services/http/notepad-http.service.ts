@@ -16,14 +16,23 @@ export class NotepadHttpService extends BaseHttpService {
         super();
     }
 
-    public getJson(): Observable<HttpEvent<any>> {
+    public getJson(): Observable<any> {
         return this.http.get<any>(environment.notepadUrl);
     }
 
-    // public getNotepad(): Observable<any> {
-    //     return this.http.get(environment.notepadUrl)
-    //     .pipe(
-    //         map((response: Response) => response.json())
-    //     );
-    // }
+    public save(notepad: Notepad): Observable<object> {
+        const gist = {
+            description: 'disqo gist',
+            files: {
+                'notepads.json': {
+                  filename: 'notepads.json',
+                  content: JSON.stringify(notepad)
+                }
+              },
+          };
+
+        return this.http.patch(environment.notepadUrl, gist, { headers: this.getHeaders() });
+    }
+
+
 }
