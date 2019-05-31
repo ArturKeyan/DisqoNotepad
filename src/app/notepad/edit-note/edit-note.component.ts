@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Note } from 'src/app/models/note.model';
 
@@ -10,6 +10,7 @@ import { Note } from 'src/app/models/note.model';
 export class EditNoteComponent implements OnInit {
   private noteForm: FormGroup;
 
+  @Output() deleteNote = new EventEmitter<Note>();
   @Input() note: Note;
 
   constructor(private fb: FormBuilder) { }
@@ -25,5 +26,9 @@ export class EditNoteComponent implements OnInit {
 
   onSubmit() {
     console.warn(this.noteForm.value);
+  }
+
+  onDelete() {
+    this.deleteNote.emit(this.note);
   }
 }

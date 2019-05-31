@@ -27,14 +27,13 @@ export class NotepadComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const loadJson = this.notepadHttpService.getJson();
 
-    this.notepadForm = this.fb.group({
-      title: new FormControl(null, Validators.required)
-    });
-
     this.subscription = loadJson.subscribe((res) => {
         const notes: Note[] = [];
-        this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepads[0] as Notepad;
+        this.notepad = (JSON.parse(res.files['notepads.json'].content)).notepad as Notepad;
         console.warn(this.notepad);
+        this.notepadForm = this.fb.group({
+          title: new FormControl(this.notepad.title, Validators.required)
+        });
     });
   }
 
@@ -43,6 +42,7 @@ export class NotepadComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    this.notepad.title = this.notepadForm.get('title').value;
     this.notepadHttpService.save(this.notepad).subscribe(res => {
       console.warn(res);
     });
@@ -52,7 +52,7 @@ export class NotepadComponent implements OnInit, OnDestroy {
     this.notepad.notes.push(note);
   }
 
-  onDelete() {
-    console.log('delete');
+  public deleteNote(note: Note): void {
+    this.notepad.notes = this.notepad.notes.filter(n => n.title !== note.title);
   }
 }

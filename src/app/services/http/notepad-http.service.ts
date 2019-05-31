@@ -17,7 +17,7 @@ export class NotepadHttpService extends BaseHttpService {
     }
 
     public getJson(): Observable<any> {
-        return this.http.get<any>(environment.notepadUrl);
+        return this.http.get<any>(`${environment.notepadUrl}?v=${Math.floor(Date.now() / 1000)}`);
     }
 
     public save(notepad: Notepad): Observable<object> {
@@ -26,7 +26,7 @@ export class NotepadHttpService extends BaseHttpService {
             files: {
                 'notepads.json': {
                   filename: 'notepads.json',
-                  content: JSON.stringify(notepad)
+                  content: JSON.stringify({notepad} )
                 }
               },
           };

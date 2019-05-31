@@ -9,6 +9,7 @@ import { Note } from 'src/app/models/note.model';
 })
 export class AddNoteComponent implements OnInit {
   @Output() addNote = new EventEmitter<Note>();
+
   private noteForm: FormGroup;
 
   constructor(private fb: FormBuilder) { }
